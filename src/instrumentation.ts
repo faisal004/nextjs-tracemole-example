@@ -16,7 +16,7 @@ export async function register() {
         serviceName: process.env.OTEL_SERVICE_NAME ?? "my-next-app",
         traceExporter: new OTLPTraceExporter({
           url:
-            process.env.TRACE_MOLE_EXPORTER_OTLP_TRACES_ENDPOINT ??
+            process.env.TRACEMOLE_OTLP_TRACES_ENDPOINT ??
             "http://localhost:4318/v1/traces",
           headers: apiKey ? { "x-api-key": apiKey } : {},
         }),
