@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCollection } from "@/lib/db";
-import type { Filter, Document } from "mongodb";
+import { searchRestaurants } from "@/lib/queries";
 
 export async function GET(request: Request) {
   try {
@@ -9,26 +8,7 @@ export async function GET(request: Request) {
     const name = searchParams.get("name")?.trim();
     const cuisine = searchParams.get("cuisine")?.trim();
 
-    const query: Filter<Document> = {};
-
-    if (borough) {
-      query.borough = borough;
-    }
-
-    if (name) {
-      query.name = { $regex: name, $options: "i" };
-    }
-
-    if (cuisine) {
-      query.cuisine = { $regex: cuisine, $options: "i" };
-    }
-
-    const collection = await getCollection();
-    const restaurants = await collection
-      .find(query)
-      .sort({ name: 1 })
-      .limit(50)
-      .toArray();
+    const restaurants = await searchRestaurants({ borough, name, cuisine });
 
     return NextResponse.json(restaurants);
   } catch (error) {

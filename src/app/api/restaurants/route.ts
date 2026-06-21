@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
+import {
+  checkDuplicateName,
+  listRestaurantsWithRelated,
+} from "@/lib/queries";
 import { getCollection } from "@/lib/db";
 import type { RestaurantDocument } from "@/lib/seed-data";
 
 export async function GET() {
   try {
-    const collection = await getCollection();
-    const restaurants = await collection
-      .find({})
-      .sort({ borough: 1, name: 1 })
-      .limit(100)
-      .toArray();
-
+    const restaurants = await listRestaurantsWithRelated();
     return NextResponse.json(restaurants);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch restaurants" },
       { status: 500 }
@@ -40,11 +38,15 @@ export async function POST(request: Request) {
         street: "Unknown St",
         zipcode: "10001",
       },
-      grades: body.grades ?? [{ date: new Date().toISOString().slice(0, 10), grade: "A" }],
+      grades: body.grades ?? [
+        { date: new Date().toISOString().slice(0, 10), grade: "A" },
+      ],
     };
 
     const collection = await getCollection();
     const result = await collection.insertOne(document);
+
+    await checkDuplicateName(document.name);
 
     return NextResponse.json(
       { ...document, _id: result.insertedId },

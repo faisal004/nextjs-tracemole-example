@@ -85,7 +85,7 @@ export function SeedPanel() {
       </div>
       <div className="space-y-4 p-4">
         <p className="text-sm text-muted-foreground">
-          Load {status?.seedSize ?? 20} NYC restaurants to get started, or clear
+          Load {status?.seedSize ?? 160} NYC restaurants to get started, or clear
           everything and start fresh.
         </p>
 

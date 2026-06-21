@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCollection, getCollectionCount } from "@/lib/db";
-import { SEED_RESTAURANTS } from "@/lib/seed-data";
+import {
+  buildSeedRestaurants,
+  SEED_RESTAURANT_COUNT,
+} from "@/lib/seed-build";
 import { COLLECTION_NAME, DB_NAME } from "@/lib/constants";
 
 export async function POST() {
@@ -18,7 +21,7 @@ export async function POST() {
       );
     }
 
-    const result = await collection.insertMany(SEED_RESTAURANTS);
+    const result = await collection.insertMany(buildSeedRestaurants());
 
     return NextResponse.json({
       message: "Database seeded successfully",
@@ -59,7 +62,7 @@ export async function GET() {
       database: DB_NAME,
       collection: COLLECTION_NAME,
       count,
-      seedSize: SEED_RESTAURANTS.length,
+      seedSize: SEED_RESTAURANT_COUNT,
       isSeeded: count > 0,
     });
   } catch (error) {
